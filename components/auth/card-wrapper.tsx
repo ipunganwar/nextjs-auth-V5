@@ -1,6 +1,8 @@
 "use client";
 
 import { Card, CardContent, CardFooter, CardHeader } from "../ui/card";
+import { HeaderAuth } from "./header";
+import { Social } from "./social";
 
 type Props = {
   children: React.ReactNode;
@@ -16,5 +18,17 @@ export const CardWrapper = ({
   backButtonHref,
   showSocial,
 }: Props) => {
-  return <Card className="w-[400px] shadow-md">{children}</Card>;
+  return (
+    <Card className="w-[400px] shadow-md">
+      <CardHeader>
+        <HeaderAuth label={headerLabel} />
+      </CardHeader>
+      <CardContent>{children}</CardContent>
+      {showSocial && (
+        <CardFooter>
+          <Social />
+        </CardFooter>
+      )}
+    </Card>
+  );
 };
