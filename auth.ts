@@ -5,6 +5,7 @@ import { UserRole } from "@prisma/client";
 import authConfig from "@/auth.config";
 import { db } from "./lib/db";
 import { getUserById } from "./data/user";
+import { use } from "react";
 
 declare module "next-auth" {
   interface Session {
@@ -21,6 +22,18 @@ declare module "next-auth/jwt" {
 }
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
+  pages: {
+    signIn: "/auth/login",
+    error: "/auth/error",
+  },
+  events: {
+    async linkAccount({ user }) {
+      await db.user.update({
+        where: { id: user?.id },
+        data: { emailVerified: new Date() },
+      });
+    },
+  },
   callbacks: {
     async session({ session, token }) {
       console.log({ sessionToken: token, session });
