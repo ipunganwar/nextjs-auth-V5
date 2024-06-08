@@ -5,7 +5,6 @@ import { UserRole } from "@prisma/client";
 import authConfig from "@/auth.config";
 import { db } from "./lib/db";
 import { getUserById } from "./data/user";
-import { use } from "react";
 
 declare module "next-auth" {
   interface Session {
@@ -35,6 +34,18 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     },
   },
   callbacks: {
+    async signIn({ user, account }) {
+      // Allow OAuth without email verification
+      if (account?.provider !== "credentials") return true;
+
+      const existingUser = await getUserById(user.id ?? "-");
+
+      // Prevent signin without email verification
+      if (!existingUser?.emailVerified) return false;
+
+      // TODO: add 2FA Check
+      return true;
+    },
     async session({ session, token }) {
       console.log({ sessionToken: token, session });
 
