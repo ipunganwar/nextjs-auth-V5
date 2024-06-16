@@ -17,6 +17,8 @@ export const NewVerificationForm = ({}: Props) => {
   const token = searchParams.get("token");
 
   const onSubmit = useCallback(() => {
+    if (error || success) return;
+
     if (!token) {
       setError("Missing token!");
       return;
@@ -29,7 +31,7 @@ export const NewVerificationForm = ({}: Props) => {
       .catch(() => {
         setError("Something went wrong!");
       });
-  }, [token]);
+  }, [token, error, success]);
 
   useEffect(() => {
     onSubmit();
@@ -45,7 +47,7 @@ export const NewVerificationForm = ({}: Props) => {
         {!success && !error && <BeatLoader />}
 
         <FormSuccess message={success} />
-        <FormError message={error} />
+        {!success && <FormError message={error} />}
       </div>
     </CardWrapper>
   );
